@@ -14,8 +14,17 @@ jobs:
 
     runs-on: ubuntu-latest
 
+jobs:
+  laravel-tests:
+
+    runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v2
+    - name: Build Docker images
+      run: docker-compose build
+    - name: Start Docker containers
+      run: docker-compose up -d
     - name: cache vendor
       id: cache
       uses: actions/cache@v1
@@ -25,17 +34,12 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-composer-
     - name: composer install
-      if: steps.cache.outputs.cache-hit != 'true'
-      run: composer install -n --prefer-dist
+      run: docker exec php composer install -n --prefer-dist
     - name: copy .env
-      run: cp .env.example .env
+      run: docker exec php cp .env.example .env
     - name: generate key
-      run: php artisan key:generate
-    - name: Create Database
-      run: |
-        mkdir -p database
-        touch database/database.sqlite
+      run: docker exec php php artisan key:generate
     - name: migrate
-      run: php artisan migrate
+      run: docker exec php php artisan migrate
     - name: Execute tests (Unit and Feature tests) via PHPUnit
-      run: vendor/bin/phpunit
+      run: docker exec php php artisan test
