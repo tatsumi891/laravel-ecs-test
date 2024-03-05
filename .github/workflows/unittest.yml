@@ -33,7 +33,7 @@ jobs:
       run: docker exec php cp .env.example .env
     - name: generate key
       run: docker exec php php artisan key:generate
-    - name: migrate
-      run: docker exec php php artisan migrate
+    # - name: migrate
+    #   run: docker exec php php artisan migrate
     - name: Execute tests (Unit and Feature tests) via PHPUnit
       run: docker exec php php artisan test
