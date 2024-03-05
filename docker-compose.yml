@@ -1,0 +1,28 @@
+version: '3'
+services:
+  nginx:
+    container_name: nginx
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    ports:
+      - "80:80"
+
+  php:
+    container_name: php
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    volumes:
+      - ./src:/var/www/html
+
+  db:
+    container_name: db
+    build: 
+      context: .
+      dockerfile: docker/mysql/Dockerfile
+    volumes:
+      - db-store:/var/lib/mysql
+
+volumes:
+  db-store:
